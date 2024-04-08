@@ -8,9 +8,10 @@
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>		
-					
-LiquidCrystal_I2C lcd(0x27,16,4);	//Inicializa o display no endereco 0x27
+#include <SoftwareSerial.h>
 
+LiquidCrystal_I2C lcd(0x27,16,4);	//Inicializa o display no endereco 0x27
+SoftwareSerial bluetooth(2,3);		// inicia bluetooth
 					//int pin = 10;
 int analyzer=0, comb1=0;
 volatile int state = LOW;
@@ -43,6 +44,11 @@ attachInterrupt(0, analy, FALLING);
   TIMSK1 |= (1 << OCIE1A);  		// enable timer compare interrupt
   interrupts();             		// enable all interrupts
   lcd.clear();
+	
+  Serial.begin(9600);
+  Serial.println("teste de DHT");
+  bluetooth.begin(9600);
+
 }
 
 ISR(TIMER1_COMPA_vect)          	// timer compare interrupt service routine
@@ -73,5 +79,14 @@ lcd.print("%       ");			//escreve no lcd na posição acima
    lcd.setCursor(4,2);			//posiciona cursor na linha 1 coluna 2
  lcd.print("        ");
 }
+
+  Serial.print("Percentual: ");
+  Serial.print(u);
+  Serial.println("%");
+
+  Serial.println("Dados Enviado");
+  bluetooth.print(u);
+
+  delay(1000);
 }
 
